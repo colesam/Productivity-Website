@@ -1,0 +1,93 @@
+/*  COLORS
+    gray = #61707d;
+    orange = #ff9544;
+    green = #37d686;
+    blue = #5fbdef;
+*/
+
+
+/* GENERAL */
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+.transitions {
+    transition: all 0.2s;
+}
+
+
+/* NAVIGATION CLASSES */
+nav {
+    background: #61707d;
+    height: 50px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+nav a {
+    color: white;
+    margin-right: 25px;
+    text-decoration: none;
+}
+
+.nav-logo {
+    margin-right: auto;
+}
+
+.nav-link:hover {
+    color: #5fbdef;
+}
+
+.active {
+    color: #37d686;
+}
+
+
+/* FLEXBOX CLASSES */
+
+/* flex direction */
+.flex-row {
+	display: flex;
+	flex-direction: row;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* justify content */
+.justify-around {
+	justify-content: space-around;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+/* align items */
+.align-center {
+    align-items: center;
+}
+
+.align-stretch {
+    align-items: stretch;
+}
+
+/* align self */
+.align-self-center {
+	align-self: center;
+}
+
+.align-self-stretch {
+    align-self: stretch;
+}
