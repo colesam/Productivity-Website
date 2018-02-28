@@ -81,8 +81,7 @@ select.form-item {
 }
 
 .tasks {
-    flex-grow: 2;
-    max-width: 60%;
+    width: 60%;
 }
 
 .display {
@@ -106,10 +105,17 @@ select.form-item {
 }
 
 /* TOOLS */
+canvas {
+    margin-top: 5px;
+}
+
+h5 {
+    margin-top: 25px;
+}
+
 .tools {
-    flex-grow: 1;
     margin-left: 10px;
-    max-width: 40%;
+    width: 40%;
 }
 
 .tools .category-indicator {
