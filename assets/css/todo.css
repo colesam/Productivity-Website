@@ -1,0 +1,121 @@
+/* TASK MANAGER CLASSES */
+button:hover {
+    cursor: pointer;
+}
+
+h2 {
+    display: inline-block;
+    margin: 0;
+}
+
+input {
+    padding-left: 5px;
+}
+
+.category-indicator {
+    margin-left: 25px;
+    width: 15px;
+}
+
+.checkbox {
+    background: #ededed;
+    border: 1px solid #565656;
+    border-radius: 50px;
+    height: 15px;
+    margin-right: 20px;
+    width: 15px;
+}
+
+.checkbox:hover {
+    cursor: pointer;
+    background: #4bed4e;
+}
+
+.date {
+    margin-left: auto;
+}
+
+.fa-plus:hover {
+    cursor: pointer;
+    color: #4bed4e;
+}
+
+.form-item {
+    border: 1px solid #565656;
+    border-radius: 3px;
+    height: 22px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+select.form-item {
+    border-radius: 0px;
+}
+
+.header {
+    color: white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 25px;
+    background: #565656;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    
+    border-bottom: 1px solid #565656;
+    padding-left: 50px;
+}
+
+.form-new {
+    padding: 0;
+    justify-content: space-around;
+}
+
+.form-new.hidden {
+    display: none;
+}
+
+.tasks {
+    flex-grow: 2;
+    max-width: 60%;
+}
+
+.display {
+    border: 1px solid #565656;
+    border-radius: 5px;
+    margin-top: 25px;
+}
+
+.fa-trash {
+    color: white;
+    margin-right: 25px;
+}
+
+.task:hover .fa-trash {
+    color: #ededed;
+}
+
+.task:hover .fa-trash:hover {
+    color: #f70202;
+    cursor: pointer;
+}
+
+/* TOOLS */
+.tools {
+    flex-grow: 1;
+    margin-left: 10px;
+    max-width: 40%;
+}
+
+.tools .category-indicator {
+    margin-left: auto;
+}
+
+#hex {
+    width: 90px;
+}

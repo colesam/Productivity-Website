@@ -5,15 +5,51 @@
     	<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		
-		<link type="text/css" rel="stylesheet" href="assets/index.css"/>
+		<link type="text/css" rel="stylesheet" href="assets/css/flexbox.css"/>
+		<link type="text/css" rel="stylesheet" href="assets/css/general.css"/>
+		<link type="text/css" rel="stylesheet" href="assets/css/todo.css"/>
+		<link type="text/css" rel="stylesheet" href="assets/font-awesome/css/fontawesome-all.min.css"/>
 		<script type="text/javascript" src="assets/index.js"></script>
 </head>
 
-<body class="flex-col" onload="load()">
-    <nav class="align-self-stretch flex-row align-center justify-end">
-        <a class="nav-logo"><strong>Productivity Website</strong></a>
+<body class="flex-col align-stretch" onload="load()">
+    <nav class="flex-row align-center justify-end">
+        <h1 class="nav-logo font-lg">Productivity Website</h1>
         <a href="#" class="nav-link transitions">Task Manager</a>
         <a href="#" class="nav-link transitions">Get Inspired</a>
     </nav>
+    
+    <div class="container flex-row justify-stretch">
+        <div class="tasks">
+            <div class="display">
+                <div class="header flex-row justify-between align-center">
+                    <h2 class="font-md">My Tasks</h2>
+                    <i class="fas fa-plus font-md transitions"></i>
+                </div>
+                <div class="row form-new hidden">
+                    <input class="form-item" type="text" placeholder="Task" id="name"/>
+                    <input class="form-item" type="date" id="date">
+                    <select class="form-item" id="category">
+                        
+                    </select>
+                    <button class="form-item transitions">Create</button>
+                </div>
+            </div>
+        </div>
+        <div class="tools">
+            <div class="display">
+                <div class="header flex-row justify-between align-center">
+                    <h2 class="font-md">Categories</h2>
+                    <i class="fas fa-plus font-md transitions"></i>
+                </div>
+                <div class="row form-new hidden">
+                    <input class="form-item" type="text" placeholder="Task" id="cat_name"/>
+                    <input class="form-item" type="text" placeholder="#AAAAAA" id="hex">
+                    <button class="form-item transitions">Create</button>
+                </div>
+            </div>
+            <canvas height="100" width="100"></canvas>
+        </div>
+    </div>
 </body>
 </html>

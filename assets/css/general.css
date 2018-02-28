@@ -1,0 +1,60 @@
+/*  COLORS
+    gray = #565656;
+    lightgray = #ededed;
+    orange = #ff9544;
+    green = #4bed4e;
+    blue = #5fbdef;
+    red = #f70202;
+*/
+
+
+/* GENERAL */
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+.container {
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+.font-lg {
+    font-size: 1.5rem;
+}
+
+.font-md {
+    font-size: 1.4rem;
+}
+
+.transitions {
+    transition: all 0.1s;
+}
+
+
+/* NAVIGATION CLASSES */
+nav {
+    background: #565656;
+    height: 50px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+nav a {
+    color: white;
+    margin-right: 25px;
+    text-decoration: none;
+}
+
+.nav-logo {
+    color: white;
+    margin-right: auto;
+}
+
+.nav-link:hover {
+    color: #5fbdef;
+}
+
+.active {
+    color: #37d686;
+}
