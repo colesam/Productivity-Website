@@ -1,10 +1,18 @@
-//  VARIABLES
+/*global localStorage*/
+//  GLOBAL VARIABLES
+var storeLocally = typeof(Storage) !== "undefined" && typeof(localStorage.tasks) !== "undefined";
+
 var tasks       = [];
-var tasksP      = [];   //  this is the tasks array but unsorted to preserve the original order
+var tasksP      = []
 var categories  = [new Category("Chore", "FFF07C"), new Category("School", "EF626C"), new Category("Girlfriend", "5FAD41"), new Category("Hobby", "84DCCF")];
+
+(storeLocally) ? tasks      = localStorage.tasks : tasks = tasks;
+(storeLocally) ? tasksP     = localStorage.tasksP : tasksP = tasksP;   //  this is the tasks array but unsorted to preserve the original order
+(storeLocally) ? categories = localStorage.categories : categories = categories;
+
 var sortMode    = 0;
+var sorts       = [];
 var canvas;
-var sorts = [];
 
 
 //  OBJECTS
@@ -87,7 +95,7 @@ function createTask(name, date, category) {
     tasksP.push(task);
     
     //  update category count
-    category.count++;
+    task.category.count++;
     
     //  update the display
     updateGUI();
@@ -173,8 +181,10 @@ function findCategoryByHex(hex) {
 
 /*  validateTask(String name, String date, String category)
     validates the parameters and returns true if they are valid, false otherwise
-        1. name must be greater than or equal to 5 characters long, must be unique
-        2. date cannot be null and must follow format: MM-DD-YYYY
+        1. name must be greater than or equal to 3 characters long, must be unique
+        2. date cannot be null and must follow format: MM-DD-YYYY 
+            a) note:    at this moment in time it is possible to enter fictitious dates (21-68-3000),
+                        but it at least does not break any sorting algorithms
         3. category cannot be null and must be in category array
 */
 function validateTask(name, date, category) {
@@ -184,11 +194,10 @@ function validateTask(name, date, category) {
     // regex for testing valid date
     var regex = new RegExp("^[0-9]{2}\-[0-9]{2}\-[0-9]{4}$");  
     
-    //  name must be greater than or equal to 5 characters long
-    (name == null || name.length < 5) ? valid = false : valid = valid;
+    //  name must be greater than or equal to 3 characters long
+    (name == null || name.length < 3) ? valid = false : valid = valid;
     
     //  name must be unique
-
     (!(findTaskByName(name) == null)) ? valid = false : valid = valid;
     
     //  date cannot be null
@@ -429,7 +438,7 @@ function confirmDelete(task) {
         default: sort by the date added
 */
 function sort(mode) {
-     console.log(mode);
+
     switch(mode) {
         
         case 1:
@@ -502,9 +511,13 @@ function sort(mode) {
             });
             break;    
         
-        default:
+        case 5:
             //  sort by original order
             tasks = tasksP;
+            break;
+            
+        default:
+            console.log("Hit default case in sort(mode) method");
     }
     
     //  update the display
@@ -520,14 +533,7 @@ function load() {
     //  DOM DEPENDENT VARIABLES
     //  set up canvas
     canvas          = document.querySelector("canvas");
-    createTask("Task1", "11-21-1995", "Chore"); 
-createTask("Task2", "11-21-1995", "Chore");
-createTask("TaskA", "11-21-1995", "School");
-createTask("TaskB", "11-21-1995", "School");
-createTask("TaskD1", "11-21-1995", "Girlfriend");
-createTask("TaskD2", "11-22-1995", "Girlfriend");
-createTask("TaskD3", "12-21-1995", "Girlfriend");
-createTask("TaskD3", "11-21-1996", "Chore");
+
     
     //  FUNCTION CALLS
     
@@ -641,3 +647,14 @@ createTask("TaskD3", "11-21-1996", "Chore");
     })
     
 }
+
+//  FOR TESTING TASK MANAGER
+
+// createTask("Task1", "11-21-1995", "Chore"); 
+// createTask("Task2", "11-21-1995", "Chore");
+// createTask("TaskA", "11-21-1995", "School");
+// createTask("TaskB", "11-21-1995", "School");
+// createTask("TaskD1", "11-21-1995", "Girlfriend");
+// createTask("TaskD2", "11-22-1995", "Girlfriend");
+// createTask("TaskD3", "12-21-1995", "Girlfriend");
+// createTask("TaskD3", "11-21-1996", "Chore");
