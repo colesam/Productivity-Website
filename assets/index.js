@@ -1,7 +1,11 @@
 //  VARIABLES
 var tasks       = [];
+var tasksP      = [];   //  this is the tasks array but unsorted to preserve the original order
 var categories  = [new Category("Chore", "FFF07C"), new Category("School", "EF626C"), new Category("Girlfriend", "5FAD41"), new Category("Hobby", "84DCCF")];
+var sortMode    = 0;
 var canvas;
+var sorts = [];
+
 
 //  OBJECTS
 /*  CATEGORY OBJECT
@@ -42,30 +46,30 @@ function Task(name, date, category) {
     
     this.name       = name;
     this.date       = date;
-    this.category   = category;
+    this.category   = findCategoryByName(category);
+    this.isComplete = false;
     
-    //  functions
-    this.delete = function() {
+}
+
+Task.prototype.delete = function() {
+    
+    var newTasks = [];
+    var toDelete = this;
+    
+    toDelete.category.count--;
+    
+    tasks.forEach(function(task) {
         
-        var newTasks = [];
-        var toDelete = this;
-        
-        toDelete.category.count--;
-        
-        tasks.forEach(function(task) {
+        if(!(task.name == toDelete.name && task.date == toDelete.date && task.category == toDelete.category)) {
             
-            if(!(task.name == toDelete.name && task.date == toDelete.date && task.category == toDelete.category)) {
-                
-                newTasks.push(task);
-                
-            }
+            newTasks.push(task);
             
-        });
+        }
         
-        tasks = newTasks;
-        updateGUI();
-        
-    }
+    });
+    
+    tasks = newTasks;
+    updateGUI();
     
 }
 
@@ -77,18 +81,37 @@ function Task(name, date, category) {
 */
 function createTask(name, date, category) {
     
-    //  find category
-    category = findCategoryByName(category);
-    
-    //  create new task and push to array
+    //  create new task and push to arrays (regular and preserved)
     var task = new Task(name, date, category);
     tasks.push(task);
+    tasksP.push(task);
     
     //  update category count
     category.count++;
     
     //  update the display
     updateGUI();
+    
+}
+
+/*  findTaskByName(String name)
+    search tasks array for category matching name, return Category obj if found, null otherwise
+*/
+function findTaskByName(name) {
+    
+    var retTask = null;
+    
+    tasks.forEach(function(task) {
+        
+        if(task.name == name) {
+            
+            retTask = task;
+            
+        }
+        
+    });
+    
+    return retTask;
     
 }
 
@@ -150,20 +173,30 @@ function findCategoryByHex(hex) {
 
 /*  validateTask(String name, String date, String category)
     validates the parameters and returns true if they are valid, false otherwise
-        1. name must be greater than or equal to 5 characters long
-        2. date cannot be null
+        1. name must be greater than or equal to 5 characters long, must be unique
+        2. date cannot be null and must follow format: MM-DD-YYYY
         3. category cannot be null and must be in category array
 */
 function validateTask(name, date, category) {
     
     var valid = true;
     
+    // regex for testing valid date
+    var regex = new RegExp("^[0-9]{2}\-[0-9]{2}\-[0-9]{4}$");  
+    
     //  name must be greater than or equal to 5 characters long
     (name == null || name.length < 5) ? valid = false : valid = valid;
     
+    //  name must be unique
+
+    (!(findTaskByName(name) == null)) ? valid = false : valid = valid;
+    
     //  date cannot be null
     (date == null) ? valid = false : valid = valid;
-
+    
+    //  date must be in 
+    (!regex.test(date)) ? valid = false: valid = valid;
+    
     //  category cannot be null and must be in categories array
     (category == null || findCategoryByName(category) == null) ? valid = false : valid = valid;
     
@@ -210,6 +243,9 @@ function loadPieChart() {
     var radius      = Math.min(canvas.width, canvas.height) / 2; //  radius will be based off the shorter side
     var position    = 0;
     
+    //  clear previous canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
     //  get sum of all data
     var sum = 0;
     categories.forEach(function(category) {
@@ -221,13 +257,17 @@ function loadPieChart() {
     //  fill the pie chart
     categories.forEach(function(category) {
         
-        ctx.beginPath();
-        ctx.moveTo(canvas.width / 2, canvas.height / 2);    //  move to the center
-        ctx.arc(canvas.width / 2, canvas.height / 2, radius, position, position + (Math.PI * 2 * (category.count / sum)));
-        ctx.lineTo(canvas.width / 2, canvas.height / 2);    //  draw line to the center
-        ctx.fillStyle = "#" + category.hex;
-        ctx.fill();
-        position += (Math.PI * 2 * (category.count / sum));
+        if(category.count > 0) {
+            
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, canvas.height / 2);    //  move to the center
+            ctx.arc(canvas.width / 2, canvas.height / 2, radius, position, position + (Math.PI * 2 * (category.count / sum)));
+            ctx.lineTo(canvas.width / 2, canvas.height / 2);    //  draw line to the center
+            ctx.fillStyle = "#" + category.hex;
+            ctx.fill();
+            position += (Math.PI * 2 * (category.count / sum));
+        
+        }
         
     });
     
@@ -281,6 +321,7 @@ function updateGUI() {
         //  create checkbox to mark for completion
         checkboxElement = document.createElement("div");
         checkboxElement.classList.add("checkbox", "transitions");
+        if(task.isComplete){ checkboxElement.classList.add("complete"); }
         taskElement.appendChild(checkboxElement);
         
         //  add the name of the task in a paragraph tag
@@ -306,8 +347,18 @@ function updateGUI() {
         //  add event listener to the trashcan icon
         deleteElement.addEventListener("click", function() {
             
-            //  delete the current task
-            task.delete();
+            confirmDelete(task);
+            
+        });
+        
+        //  add event listener to checkbox
+        checkboxElement.addEventListener("click", function() {
+            
+            //  toggle complete class
+            this.classList.toggle("complete");
+            
+            //  flip the task's complete variable
+            (task.isComplete) ? task.isComplete = false : task.isComplete = true;
             
         });
         
@@ -347,6 +398,120 @@ function updateGUI() {
     
 }
 
+/*  confirmDelete()
+    display deletion confirmation message and then return true if confirmed, false otherwise
+*/
+function confirmDelete(task) {
+    
+    //  display the message
+    var message = document.querySelector(".confirmation-display");
+    message.classList.remove("hidden");
+    
+    //  set confirmation to true so that the task can be deleted
+    document.querySelector(".btn-confirm").addEventListener("click", function() { 
+        
+        task.delete(); 
+        message.classList.add("hidden"); 
+        
+    });
+    
+    //  set confirmation to true so that the task can be deleted
+    document.querySelector(".btn-cancel").addEventListener("click", function() { message.classList.add("hidden"); });
+    
+}
+
+/*  sort(int mode)
+    sort the tasks by specifying a mode (int)
+        1. sort by the task's name (case insensitive)
+        2. sort by the task's category
+        3. sort by the task's date
+        4. sort by the task's completeness
+        default: sort by the date added
+*/
+function sort(mode) {
+     console.log(mode);
+    switch(mode) {
+        
+        case 1:
+            //  sort by task name
+            tasks.sort(function(a, b) {
+                
+                return a.name.localeCompare(b.name);
+                
+            }); 
+            break;
+        
+        case 2:
+            //  sort by task's category
+            tasks.sort(function(a, b) {
+                
+                return a.category.name.localeCompare(b.category.name);
+                
+            });
+            break;
+            
+        case 3:
+            //  sort by task date
+            tasks.sort(function(a, b) {
+                
+                var dateA = {
+                    
+                    day:    parseInt(a.date.substr(0, 2)),
+                    month:  parseInt(a.date.substr(3, 2)),
+                    year:   parseInt(a.date.substr(6))
+                    
+                }
+                
+                var dateB = {
+                    
+                    day:    parseInt(b.date.substr(0, 2)),
+                    month:  parseInt(b.date.substr(3, 2)),
+                    year:   parseInt(b.date.substr(6))
+                    
+                }
+                
+                //  sort by day
+                if(dateA.year == dateB.year && dateA.month == dateB.month) { return dateA.day - dateB.day; }
+                
+                //  sort by month
+                if(dateA.year == dateB.year) { return dateA.month - dateB.month }
+                
+                //  sort by year
+                return dateA.year - dateB.year;
+                
+            });
+        
+        case 4:
+            //  sort by completeness
+            tasks.sort(function(a, b) {
+                
+                if(a.isComplete == b.isComplete) { 
+                    
+                    return 0; 
+                    
+                } else if(a.isComplete) {
+                    
+                    return -1;
+                    
+                } else {
+                    
+                    return 1;
+                    
+                }
+                
+            });
+            break;    
+        
+        default:
+            //  sort by original order
+            tasks = tasksP;
+    }
+    
+    //  update the display
+    updateGUI();
+    
+}
+
 /*  load()
     executes when the body of index.html has been loaded
 */
@@ -355,22 +520,19 @@ function load() {
     //  DOM DEPENDENT VARIABLES
     //  set up canvas
     canvas          = document.querySelector("canvas");
-    // var ctx         = canvas.getContext("2d");
-    // var ratio       = window.devicePixelRatio;
-    // var old_width   = canvas.width;
-    // var old_height  = canvas.height;
-    
-    // canvas.width = old_width * ratio;
-    // canvas.style.width = old_width + "px";
-    
-    // canvas.height = old_height * ratio;
-    // canvas.style.height = old_height + "px";
-    
-    // ctx.scale(ratio, ratio);
+    createTask("Task1", "11-21-1995", "Chore"); 
+createTask("Task2", "11-21-1995", "Chore");
+createTask("TaskA", "11-21-1995", "School");
+createTask("TaskB", "11-21-1995", "School");
+createTask("TaskD1", "11-21-1995", "Girlfriend");
+createTask("TaskD2", "11-22-1995", "Girlfriend");
+createTask("TaskD3", "12-21-1995", "Girlfriend");
+createTask("TaskD3", "11-21-1996", "Chore");
     
     //  FUNCTION CALLS
     
     updateGUI();
+    
     
     //  EVENT LISTENERS
     
@@ -436,5 +598,46 @@ function load() {
         
     });
     
-}
+    //  event listeners for sorting tasks
+    // var sorts = document.querySelectorAll(".sort");
+    
+    // for(i = 1; i <= 5; i++) {
+    //     console.log(sorts[i-1]);
+    //     sorts[i-1].addEventListener("click", function() {
+    //         console.log(i);
 
+
+    //         
+    //         this.classList.add("active");
+    //         sort(i);
+            
+    //     });
+        
+    // }
+    
+    //  get the sorter elements
+    sorts = document.querySelectorAll(".sort");
+    
+    //  define a mode for each sort element
+    for(var i = 0; i < 5; i++) {
+        
+        sorts[i]["mode"] = i + 1;
+        
+    }
+    
+    sorts.forEach(function(element) {
+        element.addEventListener("click", function() {
+            //  remove active class from all sorts
+            sorts.forEach(function(element) {
+                
+              element.classList.remove("active");
+                
+            });
+            
+            //  add active tag and sort the tasks, i acts as the mode parameter
+            this.classList.add("active");
+            sort(this.mode);
+        });
+    })
+    
+}

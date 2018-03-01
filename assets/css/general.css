@@ -2,7 +2,7 @@
     gray = #565656;
     lightgray = #ededed;
     orange = #ff9544;
-    green = #4bed4e;
+    green = #51d33d;
     blue = #5fbdef;
     red = #f70202;
 */
@@ -25,6 +25,10 @@ body {
 
 .font-md {
     font-size: 1.4rem;
+}
+
+.font-sm {
+    font-size: 0.9rem;
 }
 
 .transitions {
@@ -56,5 +60,6 @@ nav a {
 }
 
 .active {
-    color: #37d686;
+    color: #51d33d;
+    font-weight: 700;
 }

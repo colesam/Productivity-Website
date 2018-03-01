@@ -28,7 +28,7 @@ input {
 
 .checkbox:hover {
     cursor: pointer;
-    background: #4bed4e;
+    background: #51d33d;
 }
 
 .date {
@@ -37,7 +37,7 @@ input {
 
 .fa-plus:hover {
     cursor: pointer;
-    color: #4bed4e;
+    color: #51d33d;
 }
 
 .form-item {
@@ -59,6 +59,7 @@ select.form-item {
     padding-left: 15px;
     padding-right: 25px;
     background: #565656;
+    border-radius: 2px 2px 0px 0px;
 }
 
 .row {
@@ -86,7 +87,7 @@ select.form-item {
 
 .display {
     border: 1px solid #565656;
-    border-radius: 5px;
+    border-radius: 5px 5px 0px 0px;
     margin-top: 25px;
 }
 
@@ -103,6 +104,16 @@ select.form-item {
     color: #f70202;
     cursor: pointer;
 }
+
+.sort-by {
+    margin-top: 25px;
+}
+
+.sort:hover {
+    color: #51d33d;
+    cursor: pointer;
+}
+
 
 /* TOOLS */
 canvas {
@@ -122,6 +133,37 @@ h5 {
     margin-left: auto;
 }
 
+.complete {
+    background: #4bed4e;
+}
+
 #hex {
     width: 90px;
+}
+
+
+/* CONFIRMATION MESSAGE */
+.confirmation-display {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+}
+
+.confirmation-display.hidden {
+    visibility: hidden;
+}
+
+.confirmation-message {
+    background: #ededed;
+    border: 1px solid #565656;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.btn-confirm {
+    background: #afe896;
+}
+
+.btn-cancel {
+    background: #ff7777;
 }

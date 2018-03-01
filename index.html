@@ -26,14 +26,23 @@
                     <h2 class="font-md">My Tasks</h2>
                     <i class="fas fa-plus font-md transitions"></i>
                 </div>
-                <div class="row form-new hidden">
+                <div class="row form-new">
                     <input class="form-item" type="text" placeholder="Task" id="name"/>
-                    <input class="form-item" type="date" id="date">
+                    <input class="form-item" type="text" placeholder="MM-DD-YYYY" id="date">
                     <select class="form-item" id="category">
                         
                     </select>
                     <button class="form-item transitions">Create</button>
                 </div>
+            </div>
+            div.row.
+            <div class="sort-by flex-row justify-around align-center font-sm">
+                <strong>Sort By:</strong>
+                <a class="sort transitions">Name</a>
+                <a class="sort transitions">Category</a>
+                <a class="sort transitions">Deadline</a>
+                <a class="sort transitions">Completeness</a>
+                <a class="sort transitions active">Original</a>
             </div>
         </div>
         <div class="tools flex-col align-center">
@@ -48,8 +57,17 @@
                     <button class="form-item transitions">Create</button>
                 </div>
             </div>
-            <h5>Category Distribution</h5>
+            <h5 class="font-sm">Category Distribution</h5>
             <canvas height="100" width="100"></canvas>
+        </div>
+    </div>
+    <div class="confirmation-display flex-row justify-center align-center hidden">
+        <div class="confirmation-message flex-col align-center">
+            <p>Are you sure you want to delete this task?</p>
+            <div class="btns">
+                <button class="form-item btn-confirm">Confirm</button>
+                <button class="form-item btn-cancel">Cancel</button>
+            </div>
         </div>
     </div>
 </body>
