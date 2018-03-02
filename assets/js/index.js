@@ -1,38 +1,17 @@
 /*global localStorage*/
+
 //  GLOBAL VARIABLES
 var storeLocally = typeof(Storage) !== "undefined" && typeof(localStorage.tasks) !== "undefined";
 
+//  initialize global arrays
 var tasks       = [];
 var tasksP      = []
 var categories  = [new Category("Chore", "FFF07C"), new Category("School", "EF626C"), new Category("Girlfriend", "5FAD41"), new Category("Hobby", "84DCCF")];
 
+//  if there is localStorage then retrieve the values and parse
 if(storeLocally) { tasks        = JSON.parse(localStorage.tasks) }
 if(storeLocally) { tasksP       = JSON.parse(localStorage.tasksP) }
 if(storeLocally) { categories   = JSON.parse(localStorage.categories) }
-
-//  destringify all of the objects in the array
-if(storeLocally) {
-    
-    tasks.forEach(function(taskJSON, i, array) {
-        
-        array[i] = JSON.parse(taskJSON);
-        
-    });
-    
-    tasksP.forEach(function(taskJSON, i, array) {
-        
-        array[i] = JSON.parse(taskJSON);
-        
-    });
-    
-    categories.forEach(function(catJSON, i, array) {
-        
-        //  for some reason I need to parse the categories twice, looking into it this weekend
-        array[i] = JSON.parse(JSON.parse(catJSON));
-        
-    });
-    
-}
 
 var sortMode    = 0;
 var sorts       = [];
@@ -306,31 +285,9 @@ function loadPieChart() {
 
 function storeLocal() {
         
-        var storeTasks = [];
-        var storeTasksP = [];
-        var storeCats = [];
-        
-        tasks.forEach(function(task) {
-            
-            storeTasks.push(JSON.stringify(task));
-            
-        });
-        
-        tasksP.forEach(function(task) {
-            
-            storeTasksP.push(JSON.stringify(task));
-            
-        });
-        
-        categories.forEach(function(category) {
-            
-            storeCats.push(JSON.stringify(category));
-            
-        });
-        
-        localStorage.tasks = JSON.stringify(storeTasks);
-        localStorage.tasksP = JSON.stringify(storeTasksP);
-        localStorage.categories = JSON.stringify(storeCats);
+        localStorage.tasks = JSON.stringify(tasks);
+        localStorage.tasksP = JSON.stringify(tasksP);
+        localStorage.categories = JSON.stringify(categories);
     
 }
 
