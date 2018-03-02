@@ -77,7 +77,7 @@ select.form-item {
     justify-content: space-around;
 }
 
-.form-new.hidden {            /*unncessary?*/
+.form-new.hidden {
     display: none;
 }
 
