@@ -574,9 +574,7 @@ function sort(mode) {
     
 }
 
-/*  load()
-    executes when the body of index.html has been loaded
-*/
+c
 function load() {
     
     //  DOM DEPENDENT VARIABLES
