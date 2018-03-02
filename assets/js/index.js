@@ -6,9 +6,33 @@ var tasks       = [];
 var tasksP      = []
 var categories  = [new Category("Chore", "FFF07C"), new Category("School", "EF626C"), new Category("Girlfriend", "5FAD41"), new Category("Hobby", "84DCCF")];
 
-(storeLocally) ? tasks      = localStorage.tasks : tasks = tasks;
-(storeLocally) ? tasksP     = localStorage.tasksP : tasksP = tasksP;   //  this is the tasks array but unsorted to preserve the original order
-(storeLocally) ? categories = localStorage.categories : categories = categories;
+if(storeLocally) { tasks        = JSON.parse(localStorage.tasks) }
+if(storeLocally) { tasksP       = JSON.parse(localStorage.tasksP) }
+if(storeLocally) { categories   = JSON.parse(localStorage.categories) }
+
+//  destringify all of the objects in the array
+if(storeLocally) {
+    
+    tasks.forEach(function(taskJSON, i, array) {
+        
+        array[i] = JSON.parse(taskJSON);
+        
+    });
+    
+    tasksP.forEach(function(taskJSON, i, array) {
+        
+        array[i] = JSON.parse(taskJSON);
+        
+    });
+    
+    categories.forEach(function(catJSON, i, array) {
+        
+        //  for some reason I need to parse the categories twice, looking into it this weekend
+        array[i] = JSON.parse(JSON.parse(catJSON));
+        
+    });
+    
+}
 
 var sortMode    = 0;
 var sorts       = [];
@@ -28,7 +52,6 @@ var canvas;
             Category:       constructor method to create a new instance of a category
                                 see object variables for function param descriptions
 */
-
 function Category(name, hex) {
     
     this.name   = name;
@@ -49,7 +72,6 @@ function Category(name, hex) {
             Task:           constructor method to create a new instance of a task
                                 see object variables for function param descriptions
 */
-
 function Task(name, date, category) {
     
     this.name       = name;
@@ -282,6 +304,36 @@ function loadPieChart() {
     
 }
 
+function storeLocal() {
+        
+        var storeTasks = [];
+        var storeTasksP = [];
+        var storeCats = [];
+        
+        tasks.forEach(function(task) {
+            
+            storeTasks.push(JSON.stringify(task));
+            
+        });
+        
+        tasksP.forEach(function(task) {
+            
+            storeTasksP.push(JSON.stringify(task));
+            
+        });
+        
+        categories.forEach(function(category) {
+            
+            storeCats.push(JSON.stringify(category));
+            
+        });
+        
+        localStorage.tasks = JSON.stringify(storeTasks);
+        localStorage.tasksP = JSON.stringify(storeTasksP);
+        localStorage.categories = JSON.stringify(storeCats);
+    
+}
+
 /*  updateGUI()
     uses tasks and categories arrays to update the GUI
 */
@@ -404,6 +456,7 @@ function updateGUI() {
     });
     
     loadPieChart();
+    storeLocal();
     
 }
 
@@ -603,23 +656,6 @@ function load() {
         }
         
     });
-    
-    //  event listeners for sorting tasks
-    // var sorts = document.querySelectorAll(".sort");
-    
-    // for(i = 1; i <= 5; i++) {
-    //     console.log(sorts[i-1]);
-    //     sorts[i-1].addEventListener("click", function() {
-    //         console.log(i);
-
-
-    //         
-    //         this.classList.add("active");
-    //         sort(i);
-            
-    //     });
-        
-    // }
     
     //  get the sorter elements
     sorts = document.querySelectorAll(".sort");

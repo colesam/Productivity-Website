@@ -6,6 +6,12 @@ var lightboxPreview = [];
 var featuredImg;
 var intervalID;
 
+//  FUNCTIONS
+
+/*  shiftRight()
+    within the lightbox, shift the active image one position to the right, wrapping
+    around to the beginning of the lightboxPreview array if necessary
+*/
 function shiftRight() {
     
     //  find the active preview item and it's position in the list
@@ -24,18 +30,24 @@ function shiftRight() {
     
     if(activePosition + 1 == 10) {
         
-        //  must reset preview items to shift forward
+        //  if the active position is at the end, it must reset preview 
+        //  images in order to shift forward
         updateLightboxPreview(activePreviewItem.img_id + 1, false);
         setActive(lightboxPreview[0]);
         
     } else {
         
+        //  set the next position to be the active image
         setActive(lightboxPreview[activePosition + 1]);
         
     }
 
 }
 
+/*  shiftLeft()
+    within the lightbox, shift the active image one position to the right, wrapping
+    around to the beginning of the lightboxPreview array if necessary
+*/
 function shiftLeft() {
     
     //  find the active preview item and it's position in the list
@@ -67,6 +79,10 @@ function shiftLeft() {
 
 }
 
+/*  setActive(DomElement lightboxPreviewItem)
+    set's the DomElement passed in the parameter as the active image in the lightbox
+    lightboxPreviewItem should be an element from the lightboxPreview array
+*/
 function setActive(lightboxPreviewItem) {
     
     featuredImg.classList.add("opaque");
@@ -90,6 +106,11 @@ function setActive(lightboxPreviewItem) {
     
 }
 
+/*  updateLightboxPreview(int id, boolean reverse)
+    
+    within the lightbox, shift the active image one position to the right, wrapping
+    around to the beginning of the lightboxPreview array if necessary
+*/
 function updateLightboxPreview(id, reverse) {
     
     //  special case for if shiftLeft() is called on the first image
@@ -102,9 +123,9 @@ function updateLightboxPreview(id, reverse) {
         
         for(var i = 0; i < 10; i++) {
             
+            //  this is what this block of code does
             var imgID = img[(id - i + 20) % 20].img_id;
             lightboxPreview[9 - i].img_id = imgID;
-            
             lightboxPreview[9 - i].src = "assets/img/preview/" + imgID + ".jpg";  
             
         }
@@ -145,15 +166,16 @@ function hideLightbox() {
     if(lightbox.getBoundingClientRect().top == 0) { animateUp(); }
     
     //  reset featured image
-    document.querySelector(".featured-img img").src = "";
+    featuredImg.classList.add("opaque");
+    featuredImg.src = "";
     
 }
 
 function animateDown() {
     
-    //  get the top property of the lightbox and increment by 15 pixels
+    //  get the top property of the lightbox and increment
     var top = Math.ceil(lightbox.getBoundingClientRect().top);
-    top += 15;
+    top += 35;
     
     //  update the lightbox's position
     lightbox.style.top = top + "px";
@@ -174,9 +196,9 @@ function animateDown() {
 
 function animateUp() {
     
-    //  get the top property of the lightbox and decrement by 15 pixels
+    //  get the top property of the lightbox and decrement
     var top = Math.ceil(lightbox.getBoundingClientRect().top);
-    top -= 15;
+    top -= 35;
     
     //  update the lightbox's position
     lightbox.style.top = top + "px";
@@ -197,7 +219,9 @@ function animateUp() {
 
 function load() {
     
-    //  DOM DEPENDENT VARIABLES
+    //  VARIABLES
+    //  use imgCounter to tell when all images have loaded
+    
     //  get all images and assign them ids corresponding to their jpg name
     img = document.querySelectorAll(".img-row .img-preview");
     
@@ -212,13 +236,19 @@ function load() {
     lightbox = document.querySelector(".lightbox");
     featuredImg = document.querySelector(".featured-img img");
     closePos = Math.ceil(lightbox.getBoundingClientRect().top);
+    
 
 
     //  EVENT LISTENERS
     //  open up the lightbox when a photo is clicked
     img.forEach(function(element) {
 
-        element.addEventListener("click", function() { showLightbox(element.img_id); });
+        element.addEventListener("click", function() { 
+            
+            showLightbox(element.img_id); 
+            setActive(lightboxPreview[0]);
+            
+        });
         
     });
     

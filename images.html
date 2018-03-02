@@ -13,17 +13,22 @@
 </head>
 
 <body class="flex-col align-stretch" onload="load()">
+    <nav class="flex-row align-center justify-end">
+        <h1 class="nav-logo font-lg">Productivity Website</h1>
+        <a href="index.html" class="nav-link transitions">Task Manager</a>
+        <a href="#" class="nav-link transitions active">Get Inspired</a>
+    </nav>
     <div class="lightbox flex-col justify-start align-center">
         <div class="control flex-row justify-center align-center font-lg">
-            <i class="fas fa-times invisible-flex"></i>
-            <i class="fas fa-backward"></i>
-            <i class="fas fa-play"></i>
-            <i class="fas fa-stop hidden"></i>
-            <i class="fas fa-forward"></i>
-            <i class="fas fa-times"><!--lex element to preserve center positioning--></i>
+            <i class="fas fa-times invisible-flex"><!--invisible flex element to preserve center positioning--></i>
+            <i class="transitions fas fa-backward"></i>
+            <i class="transitions fas fa-play"></i>
+            <i class="transitions fas fa-stop hidden"></i>
+            <i class="transitions fas fa-forward"></i>
+            <i class="transitions fas fa-times"></i>
         </div>
         <div class="featured-img">
-            <img class="transitions-long" src="" alt="">
+            <img class="transitions-long opaque" src="" alt="">
         </div>
         <div class="preview flex-row justify-center align-center">
             <img class="img-preview transitions-long active" src=""></img>
@@ -38,11 +43,6 @@
             <img class="img-preview transitions-long" src=""></img>
         </div>
     </div>
-    <nav class="flex-row align-center justify-end">
-        <h1 class="nav-logo font-lg">Productivity Website</h1>
-        <a href="#" class="nav-link transitions">Task Manager</a>
-        <a href="#" class="nav-link transitions">Get Inspired</a>
-    </nav>
     <div class="container">
         <div class="img-row flex-row justify-center align-center">
             <img class="img-preview transitions" src="assets/img/preview/1.jpg"></img>
