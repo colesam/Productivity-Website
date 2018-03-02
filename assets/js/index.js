@@ -421,6 +421,9 @@ function updateGUI() {
             //  flip the task's complete variable
             (task.isComplete) ? task.isComplete = false : task.isComplete = true;
             
+            //  update the localStorage
+            storeLocal();
+
         });
         
     });
@@ -588,9 +591,12 @@ function load() {
     canvas          = document.querySelector("canvas");
 
     
-    //  FUNCTION CALLS
+    //  FUNCTION CALLS AND MISC
     
     updateGUI();
+    
+    //  show task creation form if there are no tasks
+    if(tasks.length == 0) { document.querySelector(".tasks .form-new").classList.remove("hidden"); }
     
     
     //  EVENT LISTENERS
