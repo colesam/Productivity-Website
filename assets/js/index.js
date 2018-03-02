@@ -3,7 +3,11 @@
 //  GLOBAL VARIABLES
 var storeLocally = typeof(Storage) !== "undefined" && typeof(localStorage.tasks) !== "undefined";
 
-//  initialize global arrays
+/*  initialize global arrays
+        tasks:      holds every task object
+        tasksP:     holds the tasks objects but is immune from sorting methods, preserving original order
+        categories: holds every category object
+*/
 var tasks       = [];
 var tasksP      = []
 var categories  = [new Category("Chore", "FFF07C"), new Category("School", "EF626C"), new Category("Girlfriend", "5FAD41"), new Category("Hobby", "84DCCF")];
@@ -12,6 +16,25 @@ var categories  = [new Category("Chore", "FFF07C"), new Category("School", "EF62
 if(storeLocally) { tasks        = JSON.parse(localStorage.tasks) }
 if(storeLocally) { tasksP       = JSON.parse(localStorage.tasksP) }
 if(storeLocally) { categories   = JSON.parse(localStorage.categories) }
+
+//  to preserve the task function delete(), I need to reconstruct the objects after JSON parse
+if(storeLocally) {
+    
+    tasks.forEach(function(task, i, tasks) {
+        
+        //  call the constructor for each task
+        tasks[i] = new Task(task.name, task.date, task.category.name, task.isComplete);
+        
+    });
+    
+    tasksP.forEach(function(task, i, tasksP) {
+        
+        //  call the constructor for each task
+        tasksP[i] = new Task(task.name, task.date, task.category.name, task.isComplete);
+        
+    });
+    
+}
 
 var sortMode    = 0;
 var sorts       = [];
@@ -50,13 +73,15 @@ function Category(name, hex) {
         object functions
             Task:           constructor method to create a new instance of a task
                                 see object variables for function param descriptions
+                                
+            delete:         removes the object who called this method from the tasks array
 */
-function Task(name, date, category) {
+function Task(name, date, category, isComplete) {
     
     this.name       = name;
     this.date       = date;
     this.category   = findCategoryByName(category);
-    this.isComplete = false;
+    this.isComplete = isComplete;
     
 }
 
@@ -65,8 +90,10 @@ Task.prototype.delete = function() {
     var newTasks = [];
     var toDelete = this;
     
+    //  update category count for pie chart
     toDelete.category.count--;
     
+    //  add every task into the newTasks array except for "this"
     tasks.forEach(function(task) {
         
         if(!(task.name == toDelete.name && task.date == toDelete.date && task.category == toDelete.category)) {
@@ -77,6 +104,7 @@ Task.prototype.delete = function() {
         
     });
     
+    //  update tasks array and GUI
     tasks = newTasks;
     updateGUI();
     
@@ -91,7 +119,7 @@ Task.prototype.delete = function() {
 function createTask(name, date, category) {
     
     //  create new task and push to arrays (regular and preserved)
-    var task = new Task(name, date, category);
+    var task = new Task(name, date, category, false);
     tasks.push(task);
     tasksP.push(task);
     
@@ -108,15 +136,13 @@ function createTask(name, date, category) {
 */
 function findTaskByName(name) {
     
+    //  if there is no match, null will be returned
     var retTask = null;
     
+    //  cycle through tasks looking for a match
     tasks.forEach(function(task) {
         
-        if(task.name == name) {
-            
-            retTask = task;
-            
-        }
+        if(task.name == name) { retTask = task; }
         
     });
     
@@ -129,6 +155,7 @@ function findTaskByName(name) {
 */
 function createCategory(name, hex) {
     
+    //  create category and push to the categories array
     var category = new Category(name, hex.toUpperCase());
     categories.push(category);
     
@@ -141,16 +168,14 @@ function createCategory(name, hex) {
     search categories array for category matching name, return Category obj if found, null otherwise
 */
 function findCategoryByName(name) {
-        
+
+    //  if there is no match, null will be returned
     var retCategory = null;
     
+    //  cycle through categories looking for a match
     categories.forEach(function(category) {
         
-        if(category.name == name) {
-            
-            retCategory = category;
-            
-        }
+        if(category.name == name) { retCategory = category; }
         
     });
     
@@ -162,17 +187,15 @@ function findCategoryByName(name) {
     search categories array for category matching hex value (no #), return Category obj if found, null otherwise
 */
 function findCategoryByHex(hex) {
-        
+    
+    //  if there is no match, null will be returned
     var retCategory = null;
     hex = hex.toUpperCase();
     
+    //  cycle through categories array looking for a match
     categories.forEach(function(category) {
         
-        if(category.hex == hex) {
-            
-            retCategory = category;
-            
-        }
+        if(category.hex == hex) { retCategory = category; }
         
     });
     
@@ -185,7 +208,7 @@ function findCategoryByHex(hex) {
         1. name must be greater than or equal to 3 characters long, must be unique
         2. date cannot be null and must follow format: MM-DD-YYYY 
             a) note:    at this moment in time it is possible to enter fictitious dates (21-68-3000),
-                        but it at least does not break any sorting algorithms
+                        but as long as it passes the RegEx it will not break any sorting algorithms
         3. category cannot be null and must be in category array
 */
 function validateTask(name, date, category) {
@@ -256,7 +279,7 @@ function loadPieChart() {
     //  clear previous canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    //  get sum of all data
+    //  get sum of all category counts
     var sum = 0;
     categories.forEach(function(category) {
         
@@ -264,18 +287,22 @@ function loadPieChart() {
         
     });
     
-    //  fill the pie chart
+    //  fill the pie chart according to category counts
     categories.forEach(function(category) {
         
         if(category.count > 0) {
             
+            //  calculate the angle of this slice
+            var angle = Math.PI * 2 * (category.count / sum);
+            
+            //  draw the slice
             ctx.beginPath();
             ctx.moveTo(canvas.width / 2, canvas.height / 2);    //  move to the center
-            ctx.arc(canvas.width / 2, canvas.height / 2, radius, position, position + (Math.PI * 2 * (category.count / sum)));
+            ctx.arc(canvas.width / 2, canvas.height / 2, radius, position, position + angle);
             ctx.lineTo(canvas.width / 2, canvas.height / 2);    //  draw line to the center
             ctx.fillStyle = "#" + category.hex;
             ctx.fill();
-            position += (Math.PI * 2 * (category.count / sum));
+            position += angle;
         
         }
         
@@ -283,6 +310,9 @@ function loadPieChart() {
     
 }
 
+/*  storeLocal()
+    use JSON to stringify the three global arrays and store them in the localStorage object
+*/
 function storeLocal() {
         
         localStorage.tasks = JSON.stringify(tasks);
@@ -292,7 +322,15 @@ function storeLocal() {
 }
 
 /*  updateGUI()
-    uses tasks and categories arrays to update the GUI
+    use the tasks and categories array to refresh the interface on the page
+    this function is called almost every time a change to one of the three global arrays is made
+    steps:
+        1.  delete all of the tasks and categories in DOM
+        2.  recreate all of the task HTML elements based off of tasks array and append
+        3.  recreate all of the category HTML elements based off of categories array and append
+        4.  reload the pie chart
+        5.  store the three global arrays locally - this was a very convenient place to put this call
+            because updateGUI() is called whenever there is a change to the three global arrays
 */
 function updateGUI() {
     
@@ -315,7 +353,7 @@ function updateGUI() {
         
     });
     
-    //  recreate default option
+    //  recreate default option for the category select field in the task creation form
     var option = document.createElement("option");
     option.innerHTML = "Select Category";
     option.value = "";
@@ -363,11 +401,7 @@ function updateGUI() {
         document.querySelector(".tasks .display").appendChild(taskElement);
         
         //  add event listener to the trashcan icon
-        deleteElement.addEventListener("click", function() {
-            
-            confirmDelete(task);
-            
-        });
+        deleteElement.addEventListener("click", function() { confirmDelete(task); });
         
         //  add event listener to checkbox
         checkboxElement.addEventListener("click", function() {
@@ -415,13 +449,15 @@ function updateGUI() {
         
     });
     
+    //  final function calls
     loadPieChart();
     storeLocal();
     
 }
 
 /*  confirmDelete()
-    display deletion confirmation message and then return true if confirmed, false otherwise
+    display deletion confirmation message that will either delete or leave the task
+    where it is in the list
 */
 function confirmDelete(task) {
     
@@ -429,7 +465,7 @@ function confirmDelete(task) {
     var message = document.querySelector(".confirmation-display");
     message.classList.remove("hidden");
     
-    //  set confirmation to true so that the task can be deleted
+    //  if delete button is clicked, call the delete method and exit out of message
     document.querySelector(".btn-confirm").addEventListener("click", function() { 
         
         task.delete(); 
@@ -437,7 +473,7 @@ function confirmDelete(task) {
         
     });
     
-    //  set confirmation to true so that the task can be deleted
+    //  if the cancel button is clicked, exit out of warning message
     document.querySelector(".btn-cancel").addEventListener("click", function() { message.classList.add("hidden"); });
     
 }
@@ -525,7 +561,7 @@ function sort(mode) {
             break;    
         
         case 5:
-            //  sort by original order
+            //  sort by original order (just update with tasksP array)
             tasks = tasksP;
             break;
             
@@ -549,7 +585,7 @@ function load() {
 
     
     //  FUNCTION CALLS AND MISC
-    
+    //  update the GUI right away
     updateGUI();
     
     //  show task creation form if there are no tasks
@@ -557,7 +593,6 @@ function load() {
     
     
     //  EVENT LISTENERS
-    
     //  display the task creation form
     document.querySelector(".tasks .fa-plus").addEventListener("click", function() {
         
@@ -643,17 +678,6 @@ function load() {
             this.classList.add("active");
             sort(this.mode);
         });
-    })
+    });
     
 }
-
-//  FOR TESTING TASK MANAGER
-
-// createTask("Task1", "11-21-1995", "Chore"); 
-// createTask("Task2", "11-21-1995", "Chore");
-// createTask("TaskA", "11-21-1995", "School");
-// createTask("TaskB", "11-21-1995", "School");
-// createTask("TaskD1", "11-21-1995", "Girlfriend");
-// createTask("TaskD2", "11-22-1995", "Girlfriend");
-// createTask("TaskD3", "12-21-1995", "Girlfriend");
-// createTask("TaskD3", "11-21-1996", "Chore");

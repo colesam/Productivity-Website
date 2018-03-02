@@ -107,9 +107,13 @@ function setActive(lightboxPreviewItem) {
 }
 
 /*  updateLightboxPreview(int id, boolean reverse)
-    
-    within the lightbox, shift the active image one position to the right, wrapping
-    around to the beginning of the lightboxPreview array if necessary
+    populate the lightboxPreview array based off of the id parameter
+    if reverse is false:
+        place the image that corresponds to the id first, and load in
+        the next 9 images after it
+    if reverse is true:
+        place the image that corresponds to the id last, and load in
+        the previous 9 images before it
 */
 function updateLightboxPreview(id, reverse) {
     
@@ -121,10 +125,14 @@ function updateLightboxPreview(id, reverse) {
     console.log(reverse);
     if(reverse) {
         
+        //  put the image specified plus the previous 9 sequential image sources in the lightbox preview image elements
         for(var i = 0; i < 10; i++) {
             
-            //  this is what this block of code does
+            //  grab the image id from the img array by converting i into the correct
+            //  iterator (accounting for negative wrap arounds)
             var imgID = img[(id - i + 20) % 20].img_id;
+            
+            //  this lightbox item gets the correct imgID and loads the correct preview
             lightboxPreview[9 - i].img_id = imgID;
             lightboxPreview[9 - i].src = "assets/img/preview/" + imgID + ".jpg";  
             
@@ -132,13 +140,15 @@ function updateLightboxPreview(id, reverse) {
         
     } else {
         
-        //  put the image specified plus the next 9 sequential image sources in the lightbox preview image elements,
-        //  wrapping around when necessary
+        //  put the image specified plus the next 9 sequential image sources in the lightbox preview image elements
         for(var i = 0; i < 10; i++) {
-    
-            var imgID = img[(id + i) % 20].img_id;
-            lightboxPreview[i].img_id = imgID;
             
+            //  grab the image id from the img array by converting i into the correct
+            //  iterator (accounting for negative wrap arounds)
+            var imgID = img[(id + i) % 20].img_id;
+            
+            //  this lightbox item gets the correct imgID and loads the correct preview
+            lightboxPreview[i].img_id = imgID;
             lightboxPreview[i].src = "assets/img/preview/" + imgID + ".jpg";    
                                   
         }        
@@ -147,6 +157,10 @@ function updateLightboxPreview(id, reverse) {
     
 }
 
+/*  showLightbox(int id)
+    update the lightbox preview using the id parameter, then set the featured image
+    if the lightbox is not open, open it with the animation function
+*/
 function showLightbox(id) {
     
     //  update the preview items in the lightbox
@@ -160,6 +174,10 @@ function showLightbox(id) {
     
 }
 
+/*  hideLightbox()
+    if the lightbox is open, use the animation function to close it and reset 
+    the featured image
+*/
 function hideLightbox() {
     
     //  if lightbox is open, close it
@@ -171,6 +189,10 @@ function hideLightbox() {
     
 }
 
+/*  animateDown()
+    every 5 ms move the fixed lightbox element 35 pixels lower until it
+    covers the entire screen
+*/
 function animateDown() {
     
     //  get the top property of the lightbox and increment
@@ -194,6 +216,10 @@ function animateDown() {
     
 }
 
+/*  animateUp()
+    every 5 ms move the fixed lightbox element 35 pixels higher until it
+    is removed from view
+*/
 function animateUp() {
     
     //  get the top property of the lightbox and decrement
@@ -217,27 +243,26 @@ function animateUp() {
     
 }
 
+/*  load()
+    executes when the body of index.html has been loaded
+*/
 function load() {
     
     //  VARIABLES
-    //  use imgCounter to tell when all images have loaded
-    
     //  get all images and assign them ids corresponding to their jpg name
     img = document.querySelectorAll(".img-row .img-preview");
-    
     for(var i = 0; i < 20; i++) {
         
         img[i]["img_id"] = i + 1;
         
     }
     
+    //  initialize global variables with DOM elements
     lightboxPreview = document.querySelectorAll(".lightbox .img-preview");
-
     lightbox = document.querySelector(".lightbox");
     featuredImg = document.querySelector(".featured-img img");
     closePos = Math.ceil(lightbox.getBoundingClientRect().top);
     
-
 
     //  EVENT LISTENERS
     //  open up the lightbox when a photo is clicked
@@ -264,19 +289,23 @@ function load() {
     //  add events to the relevant keys
     document.addEventListener("keydown", function(event) {
         
+        //  these events should only fire if the lightbox is open
         if(lightbox.getBoundingClientRect().top == 0) {
             
             switch(event.key) {
                 
                 case "Escape":
+                    //  exit the lightbox
                     hideLightbox();
                     break;
                     
                 case "ArrowRight":
+                    //  move one image to the right
                     shiftRight();
                     break;
                     
                 case "ArrowLeft":
+                    //  move one image to the left
                     shiftLeft();
                     break;
                 
@@ -289,6 +318,7 @@ function load() {
         
     });
     
+    //  automatically shift one image to the right every 10 seconds
     document.querySelector(".fa-play").addEventListener("click", function() {
         
         shiftRight();
@@ -299,6 +329,7 @@ function load() {
         
     });
     
+    //  stop shifting to the right every 10 seconds
     document.querySelector(".fa-stop").addEventListener("click", function() {
         
         clearInterval(intervalID);
@@ -308,7 +339,7 @@ function load() {
         
     });
 
-    
+    //  if a lightbox preview image is clicked, make it the active image
     lightboxPreview.forEach(function(previewItem) {
         
         previewItem.addEventListener("click", function() { setActive(this); });
