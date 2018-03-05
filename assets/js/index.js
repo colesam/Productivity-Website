@@ -239,7 +239,7 @@ function validateTask(name, date, category) {
 
 /*  validateCategory(String name, String hex)
     validates the parameters and returns true if they are valid, false otherwise
-        1. name must be greater than or equal to 5 characters long, must be unique
+        1. name must be greater than or equal to 3 characters long, must be unique
         2. hex cannot be null, must be valid 6 character hex code, must be unique
 */
 function validateCategory(name, hex) {
@@ -250,8 +250,8 @@ function validateCategory(name, hex) {
     // regex for testing valid 6 character hex code
     var regex = new RegExp("[A-F0-9]{6}");   
     
-    //  name must be greater than or equal to 5 characters long
-    (name == null || name.length < 5) ? valid = false : valid = valid;
+    //  name must be greater than or equal to 3 characters long
+    (name == null || name.length < 3) ? valid = false : valid = valid;
     
     //  name must be unique
     (findCategoryByName(name) != null) ? valid = false: valid = valid;
@@ -574,7 +574,7 @@ function sort(mode) {
     
 }
 
-c
+
 function load() {
     
     //  DOM DEPENDENT VARIABLES
